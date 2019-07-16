@@ -9,35 +9,27 @@
   <div id="alice">
     <p>Alice</p>
     <div class="messages"></div>
-    <input class="publish-button" type="submit" data-author="alice" value="Click here to publish as Alice" />
+    <textarea name="message" rows="8" cols="80"></textarea>
+    <input class="publish-button" type="submit" data-author="alice" data-recipient="bob" value="Click here to publish as Alice" />
   </div>
   <div id="bob">
     <p>Bob</p>
     <div class="messages"></div>
-    <input class="publish-button" type="submit" data-author="bob" value="Click here to publish as Bob" />
+    <textarea name="message" rows="8" cols="80"></textarea>
+    <input class="publish-button" type="submit" data-author="bob" data-recipient="alice" value="Click here to publish as Bob" />
   </div>
 </body>
 
 <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
 <script>
-  const pubnub = new PubNub({
-    publishKey: "YOUR_PUBLISH_KEY",
-    subscribeKey: "YOUR_SUBSCRIBE_KEY"
-  });
-
-  const messagingChannel = "messaging_channel"
-
-  const buttons = document.getElementsByClassName('publish-button');
-  let index;
-
-  for (index = 0; index < buttons.length; index++) {
-    let button = buttons[index];
-    button.addEventListener('click', ({ target }) => {
+  const setupButton = (button, pubnub, messagingChannel) => {
+    button.addEventListener('click', ({ target: { dataset: { author, recipient} } }) => {
+      const inputElement = document.querySelector(`#${author} textarea`);
       const message = {
-        author: target.dataset.author,
-        text: "Message text"
-      }
-      console.log(message)
+        author,
+        recipient,
+        text: inputElement.value
+      };
       pubnub.publish({
         channel: messagingChannel,
         message
@@ -47,16 +39,35 @@
     });
   }
 
+  const setupPubnub = (pubnub) => {
+    pubnub.subscribe({
+      channels: [messagingChannel]
+    });
 
-  pubnub.subscribe({
-    channels: [messagingChannel]
+    pubnub.addListener({
+      message: function({ message: { author, recipient, text }}) {
+        let pElement = document.createElement('p');
+        pElement.appendChild(document.createTextNode(text));
+        console.log(author, recipient, text)
+        const outputElement = document.querySelector(`#${recipient} .messages`)
+        outputElement.appendChild(pElement);
+      }
+    });
+  }
+
+  const pubnub = new PubNub({
+    publishKey: "YOUR_PUBLISH_KEY",
+    subscribeKey: "YOUR_SUBSCRIBE_KEY"
   });
 
-  pubnub.addListener({
-    message: function(event) {
-      let pElement = document.createElement('p');
-      pElement.appendChild(document.createTextNode(event.message.text));
-      document.body.appendChild(pElement);
-    }
-  });
+  const messagingChannel = "messaging_channel";
+
+  const buttons = document.getElementsByClassName('publish-button');
+  let index;
+
+  for (index = 0; index < buttons.length; index++) {
+    let button = buttons[index];
+    setupButton(button, pubnub, messagingChannel);
+  }
+  setupPubnub(pubnub);
 </script></html>
