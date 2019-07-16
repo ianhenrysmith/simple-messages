@@ -3,7 +3,6 @@ This is a really simple page that uses PubNub to send messages between two users
 
 ## Setup
 * You need a modern browser (this project uses ES6). [Firefox](https://www.mozilla.org/en-US/firefox/) is good.
-* You also need a [PubNub](https://pubnub.com/) account.
 
 #### Configuration
 1. Open up the page with your browser. You can do this by running `open index.html` in a terminal.
