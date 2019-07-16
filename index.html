@@ -8,28 +8,39 @@
 <body>
   <div id="alice">
     <p>Alice</p>
-    <div class="messages"></div>
     <textarea name="message" rows="8" cols="80"></textarea>
     <input class="publish-button" type="submit" data-author="alice" data-recipient="bob" value="Click here to publish as Alice" />
+    <div class="messages"></div>
   </div>
   <div id="bob">
     <p>Bob</p>
-    <div class="messages"></div>
     <textarea name="message" rows="8" cols="80"></textarea>
     <input class="publish-button" type="submit" data-author="bob" data-recipient="alice" value="Click here to publish as Bob" />
+    <div class="messages"></div>
   </div>
 </body>
 
 <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
 <script>
+  const getAgentInputElement = (agent) => {
+    return document.querySelector(`#${agent} .messages`);
+  }
+
+  const appendMessage = (agent, text, messageClass) => {
+    let pElement = document.createElement('p');
+    pElement.classList.add(messageClass);
+    pElement.appendChild(document.createTextNode(text));
+
+    const outputElement = getAgentInputElement(agent);
+    outputElement.appendChild(pElement);
+  };
+
   const setupButton = (button, pubnub, messagingChannel) => {
     button.addEventListener('click', ({ target: { dataset: { author, recipient} } }) => {
       const inputElement = document.querySelector(`#${author} textarea`);
-      const message = {
-        author,
-        recipient,
-        text: inputElement.value
-      };
+      const text = inputElement.value;
+      const message = { author, recipient, text };
+      appendMessage(author, text, "sent");
       pubnub.publish({
         channel: messagingChannel,
         message
@@ -46,11 +57,7 @@
 
     pubnub.addListener({
       message: function({ message: { author, recipient, text }}) {
-        let pElement = document.createElement('p');
-        pElement.appendChild(document.createTextNode(text));
-        console.log(author, recipient, text)
-        const outputElement = document.querySelector(`#${recipient} .messages`)
-        outputElement.appendChild(pElement);
+        appendMessage(recipient, text, "received");
       }
     });
   }
