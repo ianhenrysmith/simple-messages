@@ -32,8 +32,10 @@ The Message object has this structure:
 I think I was able to satisfy the requirements of the project: make an app that sends messages between two users. I spent about an hour on the code for the app and something like 15 minutes styling it.
 
 Design decisions I made:
-* I ended up checking in a pair of PubNub keys into the repo because they're demo keys and present zero risk if someone gets ahold of them. It would be better to use environment variables, though.
+* I tried to keep the app as simple as possible, so I didn't use any JS modules or CSS libraries or any other hoopajoop.
+* I used direct DOM manipulation because the frontend interactions involved in this app are really simple and I wanted to keep the app as simple as possible. I also wanted to re-familiarize myself with things like `document.querySelector` because when else will I do it?
 * I used PubNub because I have used it before and knew it could be used to send messages between two clients. It can send arbitrary JSON objects, so it can encode data like who sent the message. It is fast and reliable. I don't think I've ever seen it go down.
+* I ended up checking in a pair of PubNub keys into the repo because they're demo keys and present zero risk if someone gets ahold of them. It would be better to use environment variables, though.
 * I inlined all my CSS, HTML and JS because the requirements for this project are simple so my code was still easy to reason about the whole time.
 * I used ES6 since it's really useful for doing things like destructuring message objects.
 * I hard-coded the users (Alice and Bob) in HTML, but my javascript code is somewhat abstracted and I think it could support arbitrary users without too much effort.
