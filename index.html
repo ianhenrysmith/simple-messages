@@ -2,41 +2,84 @@
 <html>
 
 <head>
-  <title>Publish Subscribe Tutorial</title>
+  <title>📤 Messages Thing</title>
+  <style>
+    #alice {
+      margin-right: 50px;
+    }
+    .messenger {
+      display: inline-block;
+      height: 500px;
+      width: 34%;
+    }
+    .messages-container {
+      position: relative;
+      height: 300px;
+      overflow: auto;
+    }
+    .messages {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+    .messages .sent {
+      text-align: right;
+    }
+    .messages .sent p {
+      background-color: #cef;
+    }
+    .messages .received p {
+      background-color: #eee;
+    }
+    .messages p {
+      display: inline-block;
+      padding: 5px 20px;
+      border-radius: 4px;
+      margin: 5px;
+    }
+  </style>
 </head>
 
 <body>
-  <div id="alice">
+  <div id="alice" class="messenger">
     <p>Alice</p>
-    <textarea name="message" rows="8" cols="80"></textarea>
+    <textarea name="message" rows="8" cols="60"></textarea>
     <input class="publish-button" type="submit" data-author="alice" data-recipient="bob" value="Click here to publish as Alice" />
-    <div class="messages"></div>
+    <div class="messages-container">
+      <div class="messages"></div>
+    </div>
   </div>
-  <div id="bob">
+  <div id="bob" class="messenger">
     <p>Bob</p>
-    <textarea name="message" rows="8" cols="80"></textarea>
+    <textarea name="message" rows="8" cols="60"></textarea>
     <input class="publish-button" type="submit" data-author="bob" data-recipient="alice" value="Click here to publish as Bob" />
-    <div class="messages"></div>
+    <div class="messages-container">
+      <div class="messages"></div>
+    </div>
   </div>
 </body>
 
 <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
 <script>
   const getAgentInputElement = (agent) => {
-    return document.querySelector(`#${agent} .messages`);
+    return document.querySelector(`#${agent} .messages-container .messages`);
   }
 
   const appendMessage = (agent, text, messageClass) => {
-    let pElement = document.createElement('p');
-    pElement.classList.add(messageClass);
+    let containerElement = document.createElement("div");
+    containerElement.classList.add("message");
+    containerElement.classList.add(messageClass);
+
+    let pElement = document.createElement("p");
     pElement.appendChild(document.createTextNode(text));
 
     const outputElement = getAgentInputElement(agent);
-    outputElement.appendChild(pElement);
+    containerElement.appendChild(pElement);
+    outputElement.appendChild(containerElement);
   };
 
   const setupButton = (button, pubnub, messagingChannel) => {
-    button.addEventListener('click', ({ target: { dataset: { author, recipient} } }) => {
+    button.addEventListener("click", ({ target: { dataset: { author, recipient} } }) => {
       const inputElement = document.querySelector(`#${author} textarea`);
       const text = inputElement.value;
       const message = { author, recipient, text };
@@ -69,7 +112,7 @@
 
   const messagingChannel = "messaging_channel";
 
-  const buttons = document.getElementsByClassName('publish-button');
+  const buttons = document.getElementsByClassName("publish-button");
   let index;
 
   for (index = 0; index < buttons.length; index++) {
