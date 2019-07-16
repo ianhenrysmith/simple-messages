@@ -40,6 +40,7 @@ Design decisions I made:
 * I used ES6 since it's really useful for doing things like destructuring message objects.
 * I hard-coded the users (Alice and Bob) in HTML, but my javascript code is somewhat abstracted and I think it could support arbitrary users without too much effort.
 * I kept my styling code pretty simple and only tested the app in Firefox. I would use a [CSS reset](https://bitsofco.de/a-look-at-css-resets-in-2018/) to keep styles more consistent between browsers were that a requirement.
+* I put all my commits in master and kept them fairly small. Were this a project with other contributors, I would do my work on feature branches and PR in my changes. I'd also squash all these random commits I'm making updating the README.
 
 Future work:
 * Would be nice to use something like [dotenv](https://www.npmjs.com/package/dotenv) to set PubNub keys.
