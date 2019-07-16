@@ -1,3 +1,5 @@
+![Demo gif](https://raw.githubusercontent.com/ianisborn/simple-messages/master/demo.gif)
+
 ## README
 This is a really simple page that uses PubNub to send messages between two users, Alice and Bob.
 
